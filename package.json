@@ -1,0 +1,36 @@
+{
+  "name": "@did-kr-cg/whisper-connect",
+  "version": "0.0.1",
+  "description": "Whisper Connect is an easy and simple decentralized (without kind of a google cloud services) p2p connect solution. Desktop browser login via mobile app. or create transaction for smart contracts and send a signature and message via whisper too. and it can push messaging service too. so the users can use any dApps or a DID services (like a ethereum login), and exchange DIDs and VCs too.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/did-kr-cg/Whisper-Connect.git"
+  },
+  "keywords": [
+    "ethereum",
+    "blockchain",
+    "connect",
+    "p2p",
+    "whisper",
+    "shh",
+    "web3",
+    "DIDs",
+    "DID",
+    "VC"
+  ],
+  "author": "did-kr-cg",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/did-kr-cg/Whisper-Connect/issues"
+  },
+  "homepage": "https://github.com/did-kr-cg/Whisper-Connect#readme",
+  "dependencies": {
+    "msgpack-lite": "^0.1.26",
+    "web3-shh": "^1.2.11",
+    "web3-utils": "^1.2.11"
+  }
+}

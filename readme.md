@@ -6,7 +6,7 @@ Whisper Connect is an easy and simple decentralized (without kind of a google cl
 # Installation
 ```
 npm install @did-kr-cg/whisper-connect --save
-yarn add install @did-kr-cg/whisper-connect --save
+yarn add install @did-kr-cg/whisper-connect
 ```
 
 # Test code

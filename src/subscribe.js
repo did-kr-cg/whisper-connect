@@ -13,7 +13,7 @@ async function subscribe(shh, topic, abi, callback = null, notification = null) 
       shh.clearSubscriptions();
     });
 
-  return {
+  const json = {
     provider: shh.currentProvider.url,
     post: {
       symKeyID,
@@ -22,7 +22,8 @@ async function subscribe(shh, topic, abi, callback = null, notification = null) 
       abi,
     },
     callback,
-  };  
+  };
+  return msgpack.encode(json).toString('base64');
 }
 
 exports.subscribe = subscribe;

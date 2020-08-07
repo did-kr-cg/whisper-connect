@@ -1,5 +1,5 @@
 const Shh = require('web3-shh');
-const {subscribe, post} = require('../index');
+const {subscribe, post} = require('../src/index');
 
 const provider = Shh.givenProvider || 'ws://some.local-or-remote.node:8546'; // TODO: change url
 const parms = { topic: '0xffaadd11', provider, symKey: null, keyPair: null };

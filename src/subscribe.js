@@ -1,5 +1,5 @@
 const Web3Utils = require('web3-utils');
-const msgpack = require("msgpack-lite");
+const msgpack = require('msgpack-lite');
 
 async function subscribe(shh, topic, abi, callback = null, notification = null) {
   const symKeyID = await shh.newSymKey();

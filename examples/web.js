@@ -2,14 +2,30 @@ const Shh = require('web3-shh');
 const {subscribe, decode, post} = require('../src/index');
 
 const provider = Shh.givenProvider || 'ws://some.local-or-remote.node:8546'; // TODO: change url
-const parms = { topic: '0xffaadd11', provider, symKey: null, keyPair: null };
-const shh = new Shh(parms.provider);
+const abi_1 = {
+  name: 'myMethod_1',
+  type: 'function',
+  inputs: [{
+    type: 'uint256',
+    name: 'myNumber'
+  }]
+};
+const abi_2 = {
+  name: 'myMethod_2',
+  type: 'function',
+  inputs: [{
+    type: 'string',
+    name: 'myString'
+  }]
+};
 
 async function start() {
-  const base64 = await subscribe(shh, parms.topic, {test: 'TODO 1'}, { topic: '0xffaadd11', abi: { test: 'TODO 2' }}, (data) => {
-    console.log(3, data);
+  const shh = new Shh(provider);
+  const base64 = await subscribe(shh, abi_1, {abi: abi_2}, (data) => {
+    console.log(4, data);
     if (data.post) {
-      post(shh, data.post.topic, data.post.symKeyID, data.post.sig, { payload: 'Callback!!!!!' });
+      // TODO: make callback payload
+      post(shh, data.post.abi, data.post.symKeyID, data.post.sig, { payload: 'Callback!!!!!' });
     }
     process.exit();
   });

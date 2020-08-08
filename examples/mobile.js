@@ -1,8 +1,25 @@
 const Shh = require('web3-shh');
-const {subscribe, post} = require('../src/index');
+const {subscribe, decode, post} = require('../src/index');
 
 const provider = Shh.givenProvider || 'ws://some.local-or-remote.node:8546'; // TODO: change url
-const parms = { topic: '0xffaadd11', symKeyID: null, sig: null };
+const abi_1 = {
+  name: 'myMethod_1',
+  type: 'function',
+  inputs: [{
+    type: 'uint256',
+    name: 'myNumber'
+  }]
+};
+const abi_2 = {
+  name: 'myMethod_2',
+  type: 'function',
+  inputs: [{
+    type: 'string',
+    name: 'myString'
+  }]
+};
+
+const parms = { symKeyID: null, sig: null };
 const args = process.argv.slice(2);
 for (let i = 0; i < args.length; i++) {
   const arg = args[i].split('=');
@@ -13,25 +30,22 @@ for (let i = 0; i < args.length; i++) {
     case 'sig':
       parms.sig = arg[1];
       break
-    case 'topic':
-      parms.topic = arg[1];
-      break
   }
 }
 
-async function start(topic, symKeyID, sig) {
+async function start(symKeyID, sig) {
   const shh = new Shh(provider);
-  const callback = { topic: '0xffaadd11', abi: { test: 'TODO 2' } };
-  const json = await subscribe(shh, callback.topic, callback.abi, null, (data) => {
-    console.log(4, data);
+  const base64 = await subscribe(shh, abi_2, null, (data) => {
+    console.log(5, data);
     process.exit();
   });
-  await post(shh, topic, symKeyID, sig, {answer: 'POST!!!!!', ...json});
-  console.log(2, 'POST!!!!!');
+  console.log(2, decode(base64))
+  await post(shh, abi_1, symKeyID, sig, {payload: 'POST!!!!!', ...decode(base64)});
+  console.log(3, 'POST!!!!!');
 }
 
 if (parms.symKeyID && parms.sig) {
-  start(parms.topic, parms.symKeyID, parms.sig);
+  start(parms.symKeyID, parms.sig);
 } else {
   console.log('error!!')
 }

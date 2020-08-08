@@ -1,9 +1,10 @@
 const Web3Utils = require('web3-utils');
+const Web3EthAbi = require('web3-eth-abi');
 const msgpack = require('msgpack-lite');
 
-async function post(shh, topic, symKeyID, sig, payload) {
+async function post(shh, abi, symKeyID, sig, payload) {
   const result = await shh.post({
-    topic,
+    topic: Web3EthAbi.encodeFunctionSignature(abi),
     symKeyID,
     sig,
     ttl: 10,

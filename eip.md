@@ -16,7 +16,7 @@ This EIP is a document that defines a protocol for p2p communication via ethereu
 Whisper Connect is an easy and simple decentralized (without kind of a google cloud services) p2p connect solution. Desktop browser login via mobile app. or create transaction for smart contracts and send a signature and message via whisper too. and it can push messaging service too. so the users can use any dApps or a DID services (like a ethereum login), and exchange DIDs and VCs too.
 
 # Specification
-![wc](https://user-images.githubusercontent.com/11692220/89493775-e0639680-d7ef-11ea-936f-611df36cd39c.png)
+![wc](https://user-images.githubusercontent.com/57783762/90310674-b23c3000-df2e-11ea-87e3-0379daa45223.png)
 
 # Sample code
 - Web

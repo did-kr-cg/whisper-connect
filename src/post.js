@@ -1,17 +1,26 @@
+const { JWT } = require('jose');
 const Web3Utils = require('web3-utils');
-const msgpack = require('msgpack-lite');
 
-async function post(shh, data, payload) {
+async function _post(shh, wallet, post, payload) {
+  const jwt = JWT.sign(payload, wallet.key, {
+    issuer: wallet.did,
+    expiresIn: '2 m',
+    kid: true,
+    header: {
+      alg: 'ES256K',
+      typ: 'JWT',
+    }
+  });
   const result = await shh.post({
-    topic: data.topic,
-    symKeyID: data.symKeyID,
-    sig: data.sig,
+    topic: post.topic,
+    symKeyID: post.symKeyID,
+    sig: post.sig,
     ttl: 10,
     powTime: 3,
     powTarget: 0.5,
-    payload: Web3Utils.bytesToHex(msgpack.encode(payload)),
+    payload: Web3Utils.utf8ToHex(jwt),
   });
   return result;
 }
 
-exports.post = post;
+exports.post = _post;

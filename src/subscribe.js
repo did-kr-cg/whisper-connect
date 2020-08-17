@@ -7,12 +7,13 @@ async function _subscribe(shh, wallet, options, notification = null) {
   const symKeyID = await shh.newSymKey();
   const sig = await shh.newKeyPair();
   const topic = Web3EthAbi.encodeFunctionSignature(options.abi);
+  const nonce = Math.floor(Math.random() * 1000000);
 
   shh.subscribe('messages', { symKeyID, topics: [topic] })
     .on('data', (data) => {
       if (notification) {
         const decode = utils.verifyJwt(Web3Utils.hexToUtf8(data.payload));
-        notification(decode ? decode.payload : null);
+        notification(decode && decode.payload.parms.nonce === nonce ? decode.payload : null);
       }
       shh.clearSubscriptions();
     });
@@ -22,6 +23,7 @@ async function _subscribe(shh, wallet, options, notification = null) {
       symKeyID,
       sig,
       topic,
+      nonce,
       ...options,
     },
   };

@@ -3,7 +3,7 @@ const Shh = require('web3-shh');
 const Web3Utils = require('web3-utils');
 const { subscribe, post, utils, ABI } = require('../src/index');
 
-const provider = 'ws://ec2-18-223-169-124.us-east-2.compute.amazonaws.com:3002' // Shh.givenProvider || 'ws://some.local-or-remote.node:8546'; // TODO: change url
+const provider = Shh.givenProvider || 'ws://some.local-or-remote.node:8546'; // TODO: change url
 
 async function start() {
   const shh = new Shh(provider);
@@ -21,7 +21,7 @@ async function start() {
       // msg = (JSON.stringify) -> hash -> encodeAbi (myFunction(bytes32 _type, bytes32 _hash))-> sign -> signature
       // msg = (string like JWT) -> hash -> encodeAbi (myFunction(bytes32 _type, bytes32 _hash)), sig = null
       const payload = {
-        parms: { type: Web3Utils.soliditySha3('type'), sig: 'signature', msg: 'data to sign (callback)' }
+        parms: { type: Web3Utils.soliditySha3('type'), sig: 'signature', msg: 'data to sign (callback)', nonce: data.post.nonce }
       };
       post(shh, wallet, data.post, payload );
     }

@@ -1,7 +1,7 @@
 const { JWT } = require('jose');
 const Web3Utils = require('web3-utils');
 
-async function _post(shh, wallet, post, payload) {
+async function post(shh, wallet, options, payload) {
   const jwt = JWT.sign(payload, wallet.key, {
     issuer: wallet.did,
     expiresIn: '2 m',
@@ -12,9 +12,9 @@ async function _post(shh, wallet, post, payload) {
     }
   });
   const result = await shh.post({
-    topic: post.topic,
-    symKeyID: post.symKeyID,
-    sig: post.sig,
+    symKeyID: options.symKeyID,
+    sig: options.sig,
+    topic: options.topic,
     ttl: 10,
     powTime: 3,
     powTarget: 0.5,
@@ -23,4 +23,4 @@ async function _post(shh, wallet, post, payload) {
   return result;
 }
 
-exports.post = _post;
+exports.post = post;

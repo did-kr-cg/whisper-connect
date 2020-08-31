@@ -1,16 +1,21 @@
-const { JWT } = require('jose');
+const didJWT = require('did-jwt');
 const Web3Utils = require('web3-utils');
 
-async function post(shh, wallet, options, payload) {
-  const jwt = JWT.sign(payload, wallet.key, {
-    issuer: wallet.did,
-    expiresIn: '2 m',
-    kid: true,
-    header: {
+async function post(shh, account, options, payload) {
+  const jwt = await didJWT.createJWT(
+    {
+      aud: options.aud,
+      name: 'whisper-connect',
+      ...payload,
+    },
+    {
       alg: 'ES256K',
-      typ: 'JWT',
+      issuer: `did:shhc:${account.address}`,
+      signer: account.signer,
+      expiresIn: 120,
     }
-  });
+  );
+
   const result = await shh.post({
     symKeyID: options.symKeyID,
     sig: options.sig,

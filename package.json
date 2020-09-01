@@ -1,6 +1,6 @@
 {
   "name": "@did-kr-cg/whisper-connect",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "Whisper Connect is an easy and simple decentralized (without kind of a google cloud services) p2p connect solution. Desktop browser login via mobile app. or create transaction for smart contracts and send a signature and message via whisper too. and it can push messaging service too. so the users can use any dApps or a DID services (like a ethereum login), and exchange DIDs and VCs too.",
   "main": "src/index.js",
   "files": [

@@ -11,7 +11,7 @@ const args = process.argv.slice(2);
 for (let i = 0; i < args.length; i++) {
   const arg = args[i].split('=');
   switch (arg[0]) {
-    case 'symKeyID':
+    case 'sym':
       parms.symKeyID = arg[1];
       break;
     case 'sig':
@@ -33,22 +33,26 @@ async function start(symKeyID, sig, nonce, iss, provider) {
     signer: didJWT.SimpleSigner('4f3edf983ac636a65a842ce7c78d9aa706d3b113bce9c46f30d7d21715b23b1d'),
   };
 
-  const jwt = await subscribe(shh, account, { abi: ABI.CREDENCIAL }, (data) => {
+  const {jwt} = await subscribe(shh, account, { abi: ABI.CREDENCIAL }, {abiEnable: false, urlEnable: false}, (data) => {
     console.log(5, data);
     process.exit();
   });
   console.log(2, didJWT.decodeJWT(jwt));
-
-  const options = {topic: Web3EthAbi.encodeFunctionSignature(ABI.REGISTER), symKeyID, sig, nonce};
-  // TODO: make a payload.
-  // msg = (JSON.stringify) -> hash -> encodeAbi (myFunction(bytes32 _type, bytes32 _hash))-> sign -> signature
-  // msg = (string like JWT) -> hash -> encodeAbi (myFunction(bytes32 _type, bytes32 _hash)), sig = null
-  const payload = {
-    parms: { type: Web3Utils.soliditySha3('type'), sig: 'signature', msg: 'data to sign (post)', nonce: parseInt(nonce) },
-    post: didJWT.decodeJWT(jwt).payload.post,
+  const qr = {
+    iss: iss,
+    request: {
+      ch: {
+        sym: symKeyID,
+        sig,
+        topic: Web3EthAbi.encodeFunctionSignature(ABI.REGISTER),
+      },
+      nonce: parseInt(nonce),
+    }
   };
-  await post(shh, account, {aud: iss, ...options}, payload);
-  console.log(3, payload);
+  const response = { type: Web3Utils.soliditySha3('type'), sig: 'signature', msg: 'data to sign (post)' };
+  const request = didJWT.decodeJWT(jwt).payload.request;
+  await post(shh, account, {payload: qr, response, request} );
+  console.log(3, qr);
 }
 
 if (parms.symKeyID && parms.sig) {

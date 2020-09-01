@@ -1,12 +1,15 @@
 const didJWT = require('did-jwt');
 const Web3Utils = require('web3-utils');
 
-async function post(shh, account, options, payload) {
+async function post(shh, account, {payload, request, response}) {
   const jwt = await didJWT.createJWT(
     {
-      aud: options.aud,
-      name: 'whisper-connect',
-      ...payload,
+      aud: payload.iss,
+      request,
+      response: {
+        nonce: payload.request.nonce,
+        ...response,
+      },
     },
     {
       alg: 'ES256K',
@@ -17,9 +20,9 @@ async function post(shh, account, options, payload) {
   );
 
   const result = await shh.post({
-    symKeyID: options.symKeyID,
-    sig: options.sig,
-    topic: options.topic,
+    symKeyID: payload.request.ch.sym,
+    sig: payload.request.ch.sig,
+    topic: payload.request.ch.topic,
     ttl: 10,
     powTime: 3,
     powTarget: 0.5,

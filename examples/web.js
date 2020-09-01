@@ -13,25 +13,23 @@ async function start() {
   };
 
   // console.log(signer);
-  const options = { abi: ABI.REGISTER, parms: {} };
-  const jwt = await subscribe(shh, account, options, async (data) => {
-    // TODO: recover data.payload = {sig: '', msg: ''}
+  const request = { abi: ABI.REGISTER };
+  const {jwt, qr} = await subscribe(shh, account, request, {abiEnable: false, urlEnable: false}, async (payload) => {
+    // TODO: recover data.response = {sig: '', msg: ''}
     // msg (JSON.stringify or string like JWT) -> hash -> encodeAbi (myFunction(bytes32 _type, bytes32 _hash))
     // recover(sig, encodeAbi)
-    console.log(4, data);
-    if (data && data.post) {
-      // TODO: make a payload.
-      // msg = (JSON.stringify) -> hash -> encodeAbi (myFunction(bytes32 _type, bytes32 _hash))-> sign -> signature
-      // msg = (string like JWT) -> hash -> encodeAbi (myFunction(bytes32 _type, bytes32 _hash)), sig = null
-      const payload = {
-        parms: { type: Web3Utils.soliditySha3('type'), sig: 'signature', msg: 'data to sign (callback)', nonce: data.post.nonce }
+    console.log(4, payload);
+    if (payload && payload.request) {
+      const response = {
+        parms: { type: Web3Utils.soliditySha3('type'), sig: 'signature', msg: 'data to sign (callback)' }
       };
-      await post(shh, account, {aud: data.iss, ...data.post}, payload );
+      await post(shh, account, {payload, response} );
     }
     process.exit();
   });
   // console.log(1, jwt, jwt.length);
-  console.log(1, didJWT.decodeJWT(jwt));
+  // console.log(1, JSON.stringify(qr));
+  console.log(1, JSON.stringify(didJWT.decodeJWT(jwt), null, 2));
 }
 
 start();

@@ -1,3 +1,5 @@
+const Web3EthAbi = require('web3-eth-abi');
+
 /*
 pragma solidity >=0.4.22 <0.7.0;
 
@@ -94,8 +96,15 @@ const abi = [
 ];
 
 const ABI = {};
+const TOPIC = {};
+
 for(let i = 0; i < abi.length; i++) {
   ABI[abi[i].name.toUpperCase()] = abi[i];
+  TOPIC[Web3EthAbi.encodeFunctionSignature(abi[i])] = {
+    name: abi[i].name.toUpperCase(),
+    abi: abi[i],
+  };
 }
 
 exports.ABI = ABI;
+exports.TOPIC = TOPIC;

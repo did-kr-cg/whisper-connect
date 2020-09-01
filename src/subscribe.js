@@ -15,13 +15,17 @@ function wrapDidDocument (did, issuer) {
   return doc;
 }
 
-async function _subscribe(shh, account, options, notification = null) {
-  const symKeyID = await shh.newSymKey();
+async function _subscribe(shh, account, request, option, notification = null) {
+  const sym = await shh.newSymKey();
   const sig = await shh.newKeyPair();
-  const topic = Web3EthAbi.encodeFunctionSignature(options.abi);
+  const topic = Web3EthAbi.encodeFunctionSignature(request.abi);
   const nonce = Math.floor(Math.random() * 1000000);
+  request.nonce = nonce;
+  if (!option.abiEnable) {
+    delete request.abi;
+  }
 
-  shh.subscribe('messages', { symKeyID, topics: [topic] })
+  shh.subscribe('messages', { symKeyID: sym, topics: [topic] })
     .on('data', async (data) => {
       if (notification) {
         try {
@@ -29,35 +33,32 @@ async function _subscribe(shh, account, options, notification = null) {
             shhc: async (did, parsed) => {
               const fullId = parsed.id.match(/^(.*)?(0x[0-9a-fA-F]{40})$/);
               if (!fullId){
-                throw new Error(`Not a valid fido DID: ${did}`);
+                throw new Error(`Not a valid shhc DID: ${did}`);
               }
               return wrapDidDocument(did, parsed.id);
             }
           });
           const decode = await didJWT.verifyJWT(Web3Utils.hexToUtf8(data.payload), {resolver: resolver, audience: `did:shhc:${account.address}`});
-          notification(decode && decode.payload.parms.nonce === nonce ? decode.payload : null);          
+          notification(decode && decode.payload && decode.payload.response && decode.payload.response.nonce === nonce ? decode.payload : null);
         } catch (error) {
           notification(null);
         }
       }
       shh.clearSubscriptions();
     });
-  const payload = {
-    provider: shh.currentProvider.url,
-    post: {
-      symKeyID,
-      sig,
-      topic,
-      nonce,
-      ...options,
-    },
-  };
 
   const jwt = await didJWT.createJWT(
     {
       aud: `did:shhc:${account.address}`,
-      name: 'whisper-connect',
-      ...payload,
+      request: {
+        ch: {
+          url: option.urlEnable ? shh.currentProvider.url : undefined,
+          sym,
+          sig,
+          topic,
+        },
+        ...request,
+      },
     },
     {
       alg: 'ES256K',
@@ -66,8 +67,9 @@ async function _subscribe(shh, account, options, notification = null) {
       expiresIn: 120,
     }
   );
-
-  return jwt;
+  const decode = didJWT.decodeJWT(jwt);
+  const qr = {request: decode.payload.request, iss: decode.payload.iss};
+  return {jwt, qr};
 }
 
 exports.subscribe = _subscribe;

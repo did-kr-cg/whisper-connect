@@ -1,3 +1,5 @@
+import { AbiItem } from 'web3-utils';
+// import { AbiCoder } from 'web3-eth-abi';
 const Web3EthAbi = require('web3-eth-abi');
 
 /*
@@ -17,10 +19,12 @@ contract WC {
     function presentation(bytes32 _type, bytes32 _hash) public {
       // dummy function
     }
+    // function contract(address _contractAddress, byte32 _hash)
+    // function transfer(address _token, address _to, byte32 _hash)
 }
 */
 
-const abi = [
+const abi: AbiItem[] = [
 	{
 		inputs: [
 			{
@@ -95,16 +99,32 @@ const abi = [
 	}
 ];
 
-const ABI = {};
-const TOPIC = {};
+interface Abi { [index: string]: AbiItem }
+interface Topic { [index: string]: { name: string, abi: AbiItem } }
+
+const ABI: Abi = {};
+const TOPIC: Topic = {};
+
+/*
+const ABI: Abi = {};
+const TOPIC: Topic = {};
+const abiCoder = new AbiCoder();
 
 for(let i = 0; i < abi.length; i++) {
-  ABI[abi[i].name.toUpperCase()] = abi[i];
+  ABI[abi[i].name!.toUpperCase()] = abi[i];
+  TOPIC[abiCoder.encodeFunctionSignature(abi[i])] = {
+    name: abi[i].name!.toUpperCase(),
+    abi: abi[i],
+  };
+}
+*/
+
+for(let i = 0; i < abi.length; i++) {
+  ABI[abi[i].name!.toUpperCase()] = abi[i];
   TOPIC[Web3EthAbi.encodeFunctionSignature(abi[i])] = {
-    name: abi[i].name.toUpperCase(),
+    name: abi[i].name!.toUpperCase(),
     abi: abi[i],
   };
 }
 
-exports.ABI = ABI;
-exports.TOPIC = TOPIC;
+export { ABI, TOPIC };

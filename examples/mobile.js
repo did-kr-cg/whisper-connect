@@ -2,9 +2,9 @@ const Shh = require('web3-shh');
 const didJWT = require('did-jwt');
 const Web3Utils = require('web3-utils');
 const Web3EthAbi = require('web3-eth-abi');
-const { subscribe, post, ABI } = require('../src/index');
+const { subscribe, post, ABI } = require('../lib/index');
 
-const provider = Shh.givenProvider || 'ws://some.local-or-remote.node:8546'; // TODO: change url
+const provider = 'ws://ec2-18-223-169-124.us-east-2.compute.amazonaws.com:3002'
 
 const parms = { symKeyID: null, sig: null, nonce: null, iss: null };
 const args = process.argv.slice(2);
@@ -33,7 +33,7 @@ async function start(symKeyID, sig, nonce, iss, provider) {
     signer: didJWT.SimpleSigner('4f3edf983ac636a65a842ce7c78d9aa706d3b113bce9c46f30d7d21715b23b1d'),
   };
 
-  const {jwt} = await subscribe(shh, account, { abi: ABI.CREDENCIAL }, {abiEnable: false, urlEnable: false}, (data) => {
+  const {jwt} = await subscribe(shh, account, ABI.CREDENCIAL, {abiEnable: false, urlEnable: false}, (data) => {
     console.log(5, data);
     process.exit();
   });

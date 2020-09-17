@@ -1,9 +1,9 @@
 const Shh = require('web3-shh');
 const didJWT = require('did-jwt');
 const Web3Utils = require('web3-utils');
-const { subscribe, post, ABI } = require('../src/index');
+const { subscribe, post, ABI } = require('../lib/index');
 
-const provider = Shh.givenProvider || 'ws://some.local-or-remote.node:8546'; // TODO: change url
+const provider = 'ws://ec2-18-223-169-124.us-east-2.compute.amazonaws.com:3002'
 
 async function start() {
   const shh = new Shh(provider);
@@ -13,8 +13,7 @@ async function start() {
   };
 
   // console.log(signer);
-  const request = { abi: ABI.REGISTER };
-  const {jwt, qr} = await subscribe(shh, account, request, {abiEnable: false, urlEnable: false}, async (payload) => {
+  const {jwt, qr} = await subscribe(shh, account, ABI.REGISTER, {abiEnable: false, urlEnable: false}, async (payload) => {
     // TODO: recover data.response = {sig: '', msg: ''}
     // msg (JSON.stringify or string like JWT) -> hash -> encodeAbi (myFunction(bytes32 _type, bytes32 _hash))
     // recover(sig, encodeAbi)
